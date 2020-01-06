@@ -24,8 +24,17 @@ class TwoWheel:
         GPIO.output(self.RIGHT_BACKWARD, False)
 
     def drive_forward(self):
-        GPIO.output(self.LEFT_FORWARD, True)
-        GPIO.output(self.RIGHT_FORWARD, True)
+       # GPIO.output(self.LEFT_FORWARD, True)
+       # GPIO.output(self.RIGHT_FORWARD,True)
+       left =  GPIO.PWM(self.LEFT_FORWARD, 1000)
+       right =  GPIO.PWM(self.RIGHT_FORWARD, 1000)
+       left.start(0)
+       right.start(0)
+       left.ChangeDutyCycle(100)
+       right.ChangeDutyCycle(100)
+       time.sleep(3)
+       left.stop()
+       right.stop()
 
     def drive_backward(self):
         GPIO.output(self.LEFT_BACKWARD, True)
@@ -52,21 +61,24 @@ class FourWheel:
         self.back_wheels.stop()
 
     def drive_forward(self, duration, speed=25):
-        for i in range(0, duration*25):
-            self.front_wheels.drive_forward()
-            self.back_wheels.drive_forward()
-            time.sleep(.04 * (speed/100.0))
-            self.stop()
-            time.sleep(0.04 * (speed/100.0) * 3)
+        self.front_wheels.drive_forward()
+        self.back_wheels.drive_forward()
+        time.sleep(duration)
+        
 
     def drive_backward(self, duration, speed=25):
+        self.front_wheels.drive_backward()
+        self.back_wheels.drive_backward()
+        time.sleep(duration)
+        self.stop()
+        '''
         for i in range(0, duration*25):
             self.front_wheels.drive_backward()
             self.back_wheels.drive_backward()
             time.sleep(.04 * (speed/100.0))
             self.stop()
             time.sleep(0.04 * (speed/100.0) * 3)
-
+'''
     def pivot_left(self, duration):
         self.front_wheels.pivot_left()
         self.back_wheels.pivot_left()
@@ -83,7 +95,7 @@ class FourWheel:
         self.front_wheels.stop()
         self.back_wheels.stop()
 
-back_wheels = TwoWheel(16, 18, 40, 38)
+back_wheels = TwoWheel(18, 16, 38, 40)
 front_wheels = TwoWheel(33, 31, 35, 37)
 
 drive = FourWheel(front_wheels, back_wheels)
@@ -91,12 +103,13 @@ drive = FourWheel(front_wheels, back_wheels)
 drive.stop()
 time.sleep(2)
 
-drive.pivot_left(2)
-drive.drive_backward(1)
+#drive.pivot_left(1)
+#drive.drive_backward(1)
+time.sleep(1)
 drive.drive_forward(1)
 drive.stop()
 time.sleep(1)
-drive.pivot_right(2)
+#drive.pivot_right(1)
 
 GPIO.cleanup()
 
