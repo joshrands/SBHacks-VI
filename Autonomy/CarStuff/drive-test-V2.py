@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-
+#GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
 class drive:
@@ -42,27 +42,28 @@ class drive:
         self.BRB_PWM.start(0)
 
     def stop(self):
-        self.FLF_PWM.ChangeDutyCycle(0)
-        self.FLB_PWM.ChangeDutyCycle(0)
-        self.FRF_PWM.ChangeDutyCycle(0)
-        self.FRB_PWM.ChangeDutyCycle(0)
-        self.BLF_PWM.ChangeDutyCycle(0)
-        self.BLB_PWM.ChangeDutyCycle(0)
-        self.BRF_PWM.ChangeDutyCycle(0)
-        self.BRB_PWM.ChangeDutyCycle(0)
+        self.FLF_PWM.stop()
+        self.FLB_PWM.stop()
+        self.FRF_PWM.stop()
+        self.FRB_PWM.stop()
+        self.BLF_PWM.stop()
+        self.BLB_PWM.stop()
+        self.BRF_PWM.stop()
+        self.BRB_PWM.stop()
 
     def forward(self,duty_cycle):
         self.FLF_PWM.ChangeDutyCycle(duty_cycle)
-        self.FLB_PWM.ChangeDutyCycle(duty_cycle)
+        self.FLB_PWM.ChangeDutyCycle(0)
         self.FRF_PWM.ChangeDutyCycle(duty_cycle)
-        self.FRB_PWM.ChangeDutyCycle(duty_cycle)
+        self.FRB_PWM.ChangeDutyCycle(0)
         self.BLF_PWM.ChangeDutyCycle(duty_cycle)
-        self.BLB_PWM.ChangeDutyCycle(duty_cycle)
+        self.BLB_PWM.ChangeDutyCycle(0)
         self.BRF_PWM.ChangeDutyCycle(duty_cycle)
-        self.BRB_PWM.ChangeDutyCycle(duty_cycle)
+        self.BRB_PWM.ChangeDutyCycle(0)
 
 
-car = drive(18,16,38,40,33,31,35,37)
-car.forward(50)
+#car = drive(16,18,40,38,31,33,37,35)
+car = drive(37,35,31,33,40,38,16,18)
+car.forward(100)
 time.sleep(2)
 car.stop()
