@@ -41,7 +41,7 @@ class drive:
         self.BRF_PWM.start(0)
         self.BRB_PWM.start(0)
 
-    def stop(self):
+    def end(self):
         self.FLF_PWM.stop()
         self.FLB_PWM.stop()
         self.FRF_PWM.stop()
@@ -50,6 +50,8 @@ class drive:
         self.BLB_PWM.stop()
         self.BRF_PWM.stop()
         self.BRB_PWM.stop()
+    
+    def stop(self):
 
     def forward(self,duty_cycle):
         self.FLF_PWM.ChangeDutyCycle(duty_cycle)
