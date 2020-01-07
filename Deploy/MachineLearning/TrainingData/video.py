@@ -17,7 +17,9 @@ while(cap.isOpened()):
   # Capture frame-by-frame
   ret, frame = cap.read()
   if ret == True:
- 
+
+    print(frame)
+
     # Display the resulting frame
     cv2.imshow('Frame',frame)
     print(len(frame[0]),len(frame[1]))

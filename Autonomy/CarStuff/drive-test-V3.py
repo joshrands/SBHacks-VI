@@ -3,6 +3,7 @@ import time
 import socket
 import cv2
 import pickle
+import os 
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -115,7 +116,7 @@ class carClass:
             
         # Define the port on which you want to connect 
         # get this before CV and ML
-        self.port = 6961# int(input("Enter image server port: "))
+        self.port = 7777# int(input("Enter image server port: "))
         self.ip = "169.231.137.9"#raw_input("Enter image server ip: ")
 
         # connect to the server (change ip address to server ip) 
@@ -249,24 +250,29 @@ class carClass:
 
 
     def getFrameError(self):
-        cap = cv2.VideoCapture(0)
-        if (cap.isOpened() == False):
-            print("Error opening camera.")
+#        cap = cv2.VideoCapture(0)
+#        if (cap.isOpened() == False):
+#            print("Error opening camera.")
 
-        ret, frame = cap.read()
-        if (ret == False):
-            print("Error reading camera.")
-            return None 
-        else:
+#        ret, frame = cap.read()
+#        if (ret == False):
+#            print("Error reading camera.")
+#            return None 
+#        else:
+       
+        os.system("raspistill -o output.png")
+        frame = cv2.imread('output.png')
+
+        if True:
 #            frame = cv2.rotate(frame,cv2.ROTATE_90_CLOCKWISE)
             image_height, image_width, _ = frame.shape
-            print(image_height, image_width)
-#            resized = cv2.resize(frame, (300,300), interpolation = cv2.INTER_AREA)
+#            print(image_height, image_width)
+            resized = cv2.resize(frame, (300,300), interpolation = cv2.INTER_AREA)
 
-            print(frame)
+        #    print(frame)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
            
-            print(gray)
+        #    print(gray)
 
             # send frame to server for feedback classification
             array = []
