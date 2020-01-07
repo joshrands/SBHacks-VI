@@ -9,6 +9,7 @@ import numpy as np
 import random
 
 train_data = []
+version = input("Enter version to save as: ")
 
 import matplotlib.pyplot as plt
 
@@ -18,6 +19,7 @@ def display_sample(img, width, height):
     #Print the label converted back to a number
 #    label = train_labels[num].argmax(axis=0)
     #Reshape the 768 values to a 28x28 image
+    cv2.imshow("Frame", img)
 
     new_img = np.array(img)
     image = new_img.reshape([57,32])
@@ -89,15 +91,43 @@ def getFramesFromVideo(file_name, attack):
     print("Read " + str(count) + " frames")
 
 getFramesFromVideo("./attack/parker1.mp4", 1)
+getFramesFromVideo("./attack/parker2.mp4", 1)
 getFramesFromVideo("./attack/parker3.mp4", 1)
-getFramesFromVideo("./attack/parker3.mp4", 1)
-getFramesFromVideo("./attack/parker4.mp4", 1)
+#getFramesFromVideo("./attack/parker4.mp4", 1)
+#getFramesFromVideo("./attack/parker5.mp4", 1)
+#getFramesFromVideo("./attack/josh1.mp4", 1)
+#getFramesFromVideo("./attack/josh2.mp4", 1)
+#getFramesFromVideo("./attack/pete1.mp4", 1)
+#getFramesFromVideo("./attack/pete2.mp4", 1)
+#getFramesFromVideo("./attack/parker21.mp4", 1)
+#getFramesFromVideo("./attack/parker22.mp4", 1)
+#getFramesFromVideo("./attack/parker23.mp4", 1)
+#getFramesFromVideo("./attack/parker31.mp4", 1)
+#getFramesFromVideo("./attack/parker32.mp4", 1)
+#getFramesFromVideo("./attack/parker33.mp4", 1)
+#getFramesFromVideo("./attack/parker34.mp4", 1)
+#getFramesFromVideo("./attack/parker35.mp4", 1)
+#getFramesFromVideo("./attack/parker36.mp4", 1)
+
 getFramesFromVideo("./gooch/parker1.mp4", 0)
 getFramesFromVideo("./gooch/parker2.mp4", 0)
 getFramesFromVideo("./gooch/parker3.mp4", 0)
-getFramesFromVideo("./gooch/parker4.mp4", 0)
+#getFramesFromVideo("./gooch/parker4.mp4", 0)
+#getFramesFromVideo("./gooch/parker5.mp4", 0)
+#getFramesFromVideo("./gooch/josh1.mp4", 0)
+#getFramesFromVideo("./gooch/josh2.mp4", 0)
+#getFramesFromVideo("./gooch/pete1.mp4", 0)
+#getFramesFromVideo("./gooch/pete2.mp4", 0)
+#getFramesFromVideo("./gooch/parker21.mp4", 0)
+#getFramesFromVideo("./gooch/parker22.mp4", 0)
+#getFramesFromVideo("./gooch/parker23.mp4", 0)
+#getFramesFromVideo("./gooch/parker31.mp4", 0)
+#getFramesFromVideo("./gooch/parker32.mp4", 0)
+#getFramesFromVideo("./gooch/parker33.mp4", 0)
+#getFramesFromVideo("./gooch/parker34.mp4", 0)
+#getFramesFromVideo("./gooch/parker35.mp4", 0)
+#getFramesFromVideo("./gooch/parker36.mp4", 0)
 
-model = Sequential()
 model = Sequential()
 model.add(Conv2D(32, kernel_size=(3, 3),
                  activation='relu',
@@ -114,6 +144,14 @@ model.add(Flatten())
 model.add(Dense(128, activation='relu'))
 # Another dropout
 model.add(Dropout(0.5))
+# A hidden layer to learn with
+model.add(Dense(128, activation='relu'))
+# Another dropout
+model.add(Dropout(0.4))
+# A hidden layer to learn with
+model.add(Dense(128, activation='relu'))
+# Another dropout
+model.add(Dropout(0.3))
 # Final categorization from 0-9 with softmax
 model.add(Dense(2, activation='softmax'))
 
@@ -158,7 +196,7 @@ for pair in test_data:
 
 history = model.fit(x_train, y_train,
                     batch_size=32,
-                    epochs=10,
+                    epochs=3,
                     verbose=2,
                     validation_data=(x_test, y_test))
 
@@ -176,7 +214,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
 
-model.save("model-cnn-v2.h5")
+model.save("model-cnn-" + str(version) + ".h5")
 
 #saver = tf.compat.v1.train.Saver()
 #sess = tf.Session()
@@ -192,11 +230,11 @@ for x in range(len(test_data)):
     if (test_data[x][1][1] == 1):
         label = 1
 
-    if (predicted != label):
+#    if (predicted != label):
 #        plt.title('Prediction: %d Label: %d' % (predicted, label))
 #        plt.imshow(test_data[x][0], cmap=plt.get_cmap('gray_r'))
 #        plt.show()
-        display_sample(test_data[x][0],0,0)
+#        display_sample(test_data[x][0],0,0)
 
 #print(train_data)
 #    print(in_arr)

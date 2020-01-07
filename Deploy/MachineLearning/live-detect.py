@@ -1,3 +1,6 @@
+from platform import python_version
+print(python_version())
+
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.models import Sequential

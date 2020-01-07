@@ -11,7 +11,8 @@ print("Hog initialized")
 
 print("Thread started")
 # open webcam video stream
-cap = cv2.VideoCapture(0)
+video_input = input("Video input: ")
+cap = cv2.VideoCapture(video_input)
 
 # the output will be written to output.avi
 #out = cv2.VideoWriter(

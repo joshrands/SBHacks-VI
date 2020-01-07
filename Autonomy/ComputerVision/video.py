@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import time
  
 # Create a VideoCapture object and read from input file
 # If the input is the camera, pass 0 instead of the video file name
@@ -22,6 +23,8 @@ while(cap.isOpened()):
     # Press Q on keyboard to  exit
     if cv2.waitKey(25) & 0xFF == ord('q'):
       break
+
+		time.sleep(1)
  
   # Break the loop
   else: 
