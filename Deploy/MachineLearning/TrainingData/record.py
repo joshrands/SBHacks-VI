@@ -2,7 +2,7 @@ import numpy as np
 import cv, cv2
 
 #cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(3)
 
 file_name = raw_input("Enter output file name: ")
 
