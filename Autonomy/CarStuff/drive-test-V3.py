@@ -21,7 +21,7 @@ class drive:
         self.RS = 11
         self.leftCount = 0
         self.rightCount = 0
-        self.gain = 10
+        self.gain = 25
         self.cmd = 0
 
         GPIO.setup(self.FLF, GPIO.OUT)
@@ -36,8 +36,8 @@ class drive:
         GPIO.setup(self.LS, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.RS, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        GPIO.add_event_detect(self.LS, GPIO.FALLING, callback = self.leftIterate, bouncetime = 10)
-        GPIO.add_event_detect(self.RS, GPIO.FALLING, callback = self.rightIterate, bouncetime = 10)
+        GPIO.add_event_detect(self.LS, GPIO.FALLING, callback = self.leftIterate, bouncetime = 5)
+        GPIO.add_event_detect(self.RS, GPIO.FALLING, callback = self.rightIterate, bouncetime = 5)
         
         self.FLF_PWM = GPIO.PWM(self.FLF, 1000)
         self.FLB_PWM = GPIO.PWM(self.FLB, 1000)
@@ -133,8 +133,8 @@ class drive:
         if self.cmd > 100:
             self.cmd = 100
 
-        elif self.cmd < 0:
-            self.cmd = 0
+        elif self.cmd < 40:
+            self.cmd = 40
 
         return self.cmd
 
@@ -157,7 +157,7 @@ car.stop()
 
 # in feet
 # gain = 10 this is up in car class
-goalTravelFt = 3
+goalTravelFt = 5
 goalTravelIn = goalTravelFt * 12
 InchPerCt = 4.125
 
@@ -166,14 +166,17 @@ Lerror = CountsDes - car.leftCount
 Rerror = CountsDes - car.rightCount
 avgError = (Lerror + Rerror)/2
 
+time.sleep(.5)
+
 while (avgError > 0):
     car.forward(car.computeCmd(avgError))
 
     Lerror = CountsDes - car.leftCount
     Rerror = CountsDes - car.rightCount
     avgError = (Lerror + Rerror) / 2
+    time.sleep(.010)
 
-
+car.stop()
 
 
 
