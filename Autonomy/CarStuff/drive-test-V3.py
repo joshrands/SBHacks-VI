@@ -1,21 +1,23 @@
 import RPi.GPIO as GPIO
 import time
 import socket
+import cv2
+import pickle
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
 
-class ultraSonic(self, trigger, echo)
+class ultraSonic:
 
     def __init__(self, trigger, echo):
         self.trigPin = trigger
         self.echoPin = echo
 
-        GPIO.setup(trigPin, GPIO.OUT)
-        GPIO.setup(echoPin, GPIO.IN)
+        GPIO.setup(self.trigPin, GPIO.OUT)
+        GPIO.setup(self.echoPin, GPIO.IN)
 
-    def distUltra():
+    def distUltra(self):
         GPIO.output(self.trigPin, True)
 
         time.sleep(0.00001)
@@ -24,10 +26,10 @@ class ultraSonic(self, trigger, echo)
         StartTime = time.time()
         StopTime = time.time()
 
-        while GPIO.input(echoPin) == 0:
+        while GPIO.input(self.echoPin) == 0:
             StartTime = time.time()
 
-        while GPIO.input(echoPin) == 1:
+        while GPIO.input(self.echoPin) == 1:
             StopTime = time.time()
 
         TimeElapsed = StopTime - StartTime
@@ -103,6 +105,8 @@ class carClass:
         self.BRF_PWM.start(0)
         self.BRB_PWM.start(0)
 
+        self.stopDistance = 50
+
         # Person detection setup with NN
 #        self.Person_NN = model = cv2.dnn.readNetFromTensorflow('models/frozen_inference_graph.pb',
 #                                      'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt')
@@ -111,15 +115,14 @@ class carClass:
             
         # Define the port on which you want to connect 
         # get this before CV and ML
-        self.port = int(input("Enter image server port: "))
-        self.ip = input("Enter image server ip: ")
+        self.port = 6961# int(input("Enter image server port: "))
+        self.ip = "169.231.137.9"#raw_input("Enter image server ip: ")
 
         # connect to the server (change ip address to server ip) 
-        self.server_socket.connect((self.ip, self.port)) 
 
-        self.VidCap = cv2.VideoCapture(0)
-        if (self.VidCap.isOpen() == False):
-            print("Failed to open camera stream")
+#        self.VidCap = cv2.VideoCapture(0)
+#        if (self.VidCap.isOpened() == False):
+#            print("Failed to open camera stream")
 
     # Stops all PWM permanently
     def end(self):
@@ -236,62 +239,80 @@ class carClass:
         person = False
         frameError = self.getFrameError()
 
-        while ultrasonic.distUltra() < stopDistance:
+        while ultrasonic.distUltra() < self.stopDistance:
             if frameError != 0 and frameError != None:
                 self.computeTrackCmd(frameError)
                 self.trackTurn()
                 time.sleep(.015)
-            elif frameError == None
+            elif frameError == None:
                 self.scan()
 
 
     def getFrameError(self):
-        ret, frame = self.VidCap.read()
+        cap = cv2.VideoCapture(0)
+        if (cap.isOpened() == False):
+            print("Error opening camera.")
+
+        ret, frame = cap.read()
         if (ret == False):
             print("Error reading camera.")
             return None 
         else:
-            frame = cv2.rotate(frame,cv2.ROTATE_90_CLOCKWISE)
+#            frame = cv2.rotate(frame,cv2.ROTATE_90_CLOCKWISE)
             image_height, image_width, _ = frame.shape
             print(image_height, image_width)
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+#            resized = cv2.resize(frame, (300,300), interpolation = cv2.INTER_AREA)
 
-            resized = cv2.resize(gray, (300,300), interpolation = cv2.INTER_AREA)
+            print(frame)
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+           
+            print(gray)
 
             # send frame to server for feedback classification
-            data = pickle.dumps(resized)
-            print(len(frame))
-            print(len(frame[0]))
-            print(self.server_socket.send(data))
+            array = []
+            for row in gray:
+                for data in row:
+                    array.append(int(data))
+#                    print(int(data))
+#                array.append(new_row)
 
-'''
-            self.Person_NN.setInput(cv2.dnn.blobFromImage(frame, size=(300, 300), swapRB=True))
-            output = self.Person_NN.forward()
+#            print(array)
 
-            feedback = None
-            for detection in output[0, 0, :, :]:
-                confidence = detection[2]
-                if confidence > .5:
-                    class_id = detection[1]
-                    if class_id == 1: 
-                        box_x = detection[3] * image_width
-                        box_y = detection[4] * image_height
-                        box_width = detection[5] * image_width
-                        box_height = detection[6] * image_height
+#            data = pickle.dumps(array)
+#            print(data)
+#            print(len(frame))
+#            print(len(frame[0]))
 
-                        # get pixel offset
-                        y_pixel = int(box_y + (box_height - box_y) / 2.0)
+#            new_data = []
+#            for i in range(0,100):
+#                new_data.append(255)
 
-                        # get control offset 
-                        feedback = (float(y_pixel) / float(image_height)) * 2 - 1
-                        print(feedback)
-'''
-        return feedback
+#            pick = pickle.dumps(new_data)
+
+            self.server_socket.connect((self.ip, self.port)) 
+#            print(self.server_socket.send(data))
+            for i in range(0,300*300):
+                point = int(array[i])
+                if (point < 10):
+                    self.server_socket.send("00" + str(point))
+                elif (point < 100):
+                    self.server_socket.send("0" + str(point))
+                else:
+                    self.server_socket.send(str(point))
+
+#                print(self.server_socket.send(array[i].encode()))
+
+            feedback = self.server_socket.recv(30)
+            print(feedback.decode())
+
+            self.server_socket.close()
+
+            return feedback
 
     def driveForward(self, goalDistFt, ultrasonic):
         goalTravelIn = goalDistFt * 12  # Convert feet goal to inches
         InchPerCt = 4.125  # Inches car moves per encoder count
-        stopDistance = 50  # cm #Limit that will cause car to stop if ultrasonic gets too close to object
+        self.stopDistance = 50  # cm #Limit that will cause car to stop if ultrasonic gets too close to object
 
         CountsDes = goalTravelIn / InchPerCt  # Find amount of times the wheels need to turn
         Lerror = CountsDes - car.leftCount  # left error
@@ -308,7 +329,7 @@ class carClass:
             car.forward(car.computeCmd(avgError))  # Calculate the forward gain and drive forward at that speed
 
             # If the ultrasonic distance is less than the threshold, the car stops
-            while (ultrasonic.distUltra() < stopDistance):
+            while (ultrasonic.distUltra() < self.stopDistance):
                 car.stop()
 
             # Recalculate error
@@ -316,9 +337,9 @@ class carClass:
             Rerror = CountsDes - car.rightCount
 
             # Reset the loop counts if either of the errors are different
-            if Lerror != lastLerr
+            if Lerror != lastLerr:
                 loopCount = 0
-            elif Rerror != lastRerr
+            elif Rerror != lastRerr:
                 loopCount = 0
 
             # Recalc average and iterate loop count
@@ -327,7 +348,7 @@ class carClass:
             time.sleep(.010)
 
             # If the loop count is greater than 50 break so seg fault does not happen
-            if loopCount > 50
+            if loopCount > 50:
                 break
 
         car.stop()  # Stop car at the end
@@ -358,9 +379,11 @@ def deployAEDSystem():
     myUltra = ultraSonic(8, 10)
 
     goalTravelFt = 5
-    myCar.driveFwd(goalTravelFt, myUltra)
+#    myCar.driveFwd(goalTravelFt, myUltra)
 
     time.sleep(0.5)
     myCar.track(myUltra)
 
     # if no people, do scan function
+deployAEDSystem()
+
