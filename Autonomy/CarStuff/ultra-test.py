@@ -8,7 +8,7 @@ trigPin = 8
 echoPin = 10
 
 GPIO.setup(trigPin, GPIO.OUT)
-GPIO.setup(echoPin, GPIO.OUT)
+GPIO.setup(echoPin, GPIO.IN)
 
 def distUltra():
     GPIO.output(trigPin, True)
@@ -28,9 +28,9 @@ def distUltra():
     TimeElapsed = StopTime - StartTime
     distance = (TimeElapsed * 34300) / 2
 
-    return distace
+    return distance
 
-while TRUE:
+while True:
     dist1 = distUltra()
     print(dist1)
     time.sleep(.25)
