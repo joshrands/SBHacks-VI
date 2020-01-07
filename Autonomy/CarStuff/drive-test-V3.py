@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
-# GPIO.setwarnings(False)
+GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
 
@@ -33,6 +33,9 @@ class drive:
         GPIO.setup(self.LS, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.RS, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+        GPIO.add_event_detect(self.LS, GPIO.FALLING, callback = self.leftIterate, bouncetime = 10)
+        GPIO.add_event_detect(self.RS, GPIO.FALLING, callback = self.rightIterate, bouncetime = 10)
+        
         self.FLF_PWM = GPIO.PWM(self.FLF, 1000)
         self.FLB_PWM = GPIO.PWM(self.FLB, 1000)
         self.FRF_PWM = GPIO.PWM(self.FRF, 1000)
@@ -113,15 +116,13 @@ class drive:
         self.BRB_PWM.ChangeDutyCycle(100)
         time.sleep(self.turnTime)
 
-    def leftIterate(channel):
-        global leftCount
-        leftCount = leftCount + 1
-        print("Left Count: ", leftCount, "\n")
+    def leftIterate(self, channel):
+        self.leftCount = self.leftCount + 1
+        print("Left Count: ", self.leftCount, "\n")
 
-    def rightIterate(channel):
-        global rightCount
-        rightCount = rightCount + 1
-        print("Right Count: ", rightCount, "\n")
+    def rightIterate(self, channel):
+        self.rightCount = self.rightCount + 1
+        print("Right Count: ", self.rightCount, "\n")
 
 
 car = drive(37, 35, 31, 33, 40, 38, 16, 18)
