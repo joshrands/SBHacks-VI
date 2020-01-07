@@ -84,25 +84,25 @@ class drive:
 
     def left_turn(self):
         self.FLF_PWM.ChangeDutyCycle(0)
-        self.FLB_PWM.ChangeDutyCycle(50)
-        self.FRF_PWM.ChangeDutyCycle(50)
+        self.FLB_PWM.ChangeDutyCycle(100)
+        self.FRF_PWM.ChangeDutyCycle(100)
         self.FRB_PWM.ChangeDutyCycle(0)
         self.BLF_PWM.ChangeDutyCycle(0)
-        self.BLB_PWM.ChangeDutyCycle(50)
-        self.BRF_PWM.ChangeDutyCycle(50)
+        self.BLB_PWM.ChangeDutyCycle(100)
+        self.BRF_PWM.ChangeDutyCycle(100)
         self.BRB_PWM.ChangeDutyCycle(0)
-        time.sleep(turnTime)
+        time.sleep(self.turnTime)
 
     def right_turn(self):
-        self.FLF_PWM.ChangeDutyCycle(50)
+        self.FLF_PWM.ChangeDutyCycle(100)
         self.FLB_PWM.ChangeDutyCycle(0)
         self.FRF_PWM.ChangeDutyCycle(0)
-        self.FRB_PWM.ChangeDutyCycle(50)
-        self.BLF_PWM.ChangeDutyCycle(50)
+        self.FRB_PWM.ChangeDutyCycle(100)
+        self.BLF_PWM.ChangeDutyCycle(100)
         self.BLB_PWM.ChangeDutyCycle(0)
         self.BRF_PWM.ChangeDutyCycle(0)
-        self.BRB_PWM.ChangeDutyCycle(50)
-        time.sleep(turnTime)
+        self.BRB_PWM.ChangeDutyCycle(100)
+        time.sleep(self.turnTime)
 
 car = drive(37,35,31,33,40,38,16,18)
 '''
@@ -119,4 +119,4 @@ car.right_turn(100)
 time.sleep(1)
 car.stop()
 '''
-car.right_turn()
+car.left_turn()
