@@ -1,3 +1,5 @@
+# client practice code to go in security-cam.py
+
 # import socket module 
 import socket                
   
