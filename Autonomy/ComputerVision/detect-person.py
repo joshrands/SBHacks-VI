@@ -18,7 +18,13 @@ while(cap.isOpened()):
  
     # Display the resulting frame
     cv2.imshow('Frame',frame)
-    print(len(frame[0]),len(frame[1]))
+
+    frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    ret, thresh = cv2.threshold(frame_gray, 127, 255, 0)
+    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    print(len(contours))
+    cv2.drawContours(frame_gray, contours, -1, (0,255,0), 3)
 
     # Press Q on keyboard to  exit
     if cv2.waitKey(25) & 0xFF == ord('q'):
