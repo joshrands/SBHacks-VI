@@ -32,7 +32,7 @@ def getFlattenArray(img):
     return out_arr
 
 # scaling images 
-scale_percent = 100
+scale_percent = 3
 
 def getFramesFromVideo(file_name, attack):
     print("Getting frames from " + file_name)
@@ -48,18 +48,19 @@ def getFramesFromVideo(file_name, attack):
 #        print(getFlattenArray(image))
         width = int(image.shape[1] * scale_percent / 100)
         height = int(image.shape[0] * scale_percent / 100)
-        #dim = (width, height)
+        dim = (width, height)
  
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        cv2.imshow("Frame", gray)          
-#        resized = cv2.resize(gray, dim, interpolation = cv2.INTER_AREA)
+        resized = cv2.resize(gray, dim, interpolation = cv2.INTER_AREA)
+
+        cv2.imshow("Frame", resized)
 #        display_sample(gray, width, height)
         # Press Q on keyboard to  exit
         if cv2.waitKey(25) & 0xFF == ord('q'):
             break
 
-        flat_img = getFlattenArray(gray)
+        flat_img = getFlattenArray(resized)
         print(len(flat_img))
 #        for data in img_data:
 #            print(data)
