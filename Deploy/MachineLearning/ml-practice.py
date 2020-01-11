@@ -47,11 +47,21 @@ model.compile(loss='categorical_crossentropy',
               optimizer=RMSprop(),
               metrics=['accuracy'])
 
+print("TEST")
+print(train_images[0])
+print("TEST")
+print(train_labels[0])
+print("TEST")
+
+print(len(train_images))
+print(len(train_labels))
+
 # fit the model to the training data 
 history = model.fit(train_images, train_labels,
                     batch_size=100,
                     epochs=3,
                     verbose=2,
+                    shuffle=True,
                     validation_data=(test_images, test_labels))
 
 # evaluate the model on new images 
@@ -61,9 +71,13 @@ print('Test accuracy:', score[1])
 
 for x in range(1000):
     test_image = test_images[x,:].reshape(1,784)
+    print(test_image)
+    print("New")
     predicted_cat = model.predict(test_image).argmax()
     label = test_labels[x].argmax()
+    print(label)
     if (predicted_cat != label):
         plt.title('Prediction: %d Label: %d' % (predicted_cat, label))
+        print(test_image.reshape([28,28]))
         plt.imshow(test_image.reshape([28,28]), cmap=plt.get_cmap('gray_r'))
         plt.show()
