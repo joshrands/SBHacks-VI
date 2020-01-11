@@ -1,0 +1,13 @@
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BOARD)
+
+leftSensorPin = 7
+rightSensorPin = 11
+
+GPIO.setup(leftSensorPin, GPIO.IN)
+GPIO.setup(rightSensorPin, GPIO.IN)
+
+while True
+    leftState =
