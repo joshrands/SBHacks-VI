@@ -95,7 +95,7 @@ class FourWheel:
         self.front_wheels.stop()
         self.back_wheels.stop()
 
-back_wheels = TwoWheel(18, 16, 38, 40)
+back_wheels = TwoWheel(18, 16, 38, 40) #switch these on Vans thing
 front_wheels = TwoWheel(33, 31, 35, 37)
 
 drive = FourWheel(front_wheels, back_wheels)
