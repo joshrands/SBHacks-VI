@@ -5,6 +5,7 @@ GPIO.setmode(GPIO.BOARD)
 
 class drive:
     def __init__(self, flf, flb, frf, frb, blf, blb, brf, brb):
+        self.turnTime = 1
         self.FLF = flf
         self.FLB = flb
         self.FRF = frf
@@ -81,27 +82,30 @@ class drive:
         self.BRF_PWM.ChangeDutyCycle(0)
         self.BRB_PWM.ChangeDutyCycle(duty_cycle)
 
-    def left_turn(self,duty_cycle):
+    def left_turn(self):
         self.FLF_PWM.ChangeDutyCycle(0)
-        self.FLB_PWM.ChangeDutyCycle(duty_cycle)
-        self.FRF_PWM.ChangeDutyCycle(duty_cycle)
+        self.FLB_PWM.ChangeDutyCycle(50)
+        self.FRF_PWM.ChangeDutyCycle(50)
         self.FRB_PWM.ChangeDutyCycle(0)
         self.BLF_PWM.ChangeDutyCycle(0)
-        self.BLB_PWM.ChangeDutyCycle(duty_cycle)
-        self.BRF_PWM.ChangeDutyCycle(duty_cycle)
+        self.BLB_PWM.ChangeDutyCycle(50)
+        self.BRF_PWM.ChangeDutyCycle(50)
         self.BRB_PWM.ChangeDutyCycle(0)
+        time.sleep(turnTime)
 
-    def right_turn(self,duty_cycle):
-        self.FLF_PWM.ChangeDutyCycle(duty_cycle)
+    def right_turn(self):
+        self.FLF_PWM.ChangeDutyCycle(50)
         self.FLB_PWM.ChangeDutyCycle(0)
         self.FRF_PWM.ChangeDutyCycle(0)
-        self.FRB_PWM.ChangeDutyCycle(duty_cycle)
-        self.BLF_PWM.ChangeDutyCycle(duty_cycle)
+        self.FRB_PWM.ChangeDutyCycle(50)
+        self.BLF_PWM.ChangeDutyCycle(50)
         self.BLB_PWM.ChangeDutyCycle(0)
         self.BRF_PWM.ChangeDutyCycle(0)
-        self.BRB_PWM.ChangeDutyCycle(duty_cycle)
+        self.BRB_PWM.ChangeDutyCycle(50)
+        time.sleep(turnTime)
 
 car = drive(37,35,31,33,40,38,16,18)
+'''
 car.forward(100)
 time.sleep(1)
 car.stop()
@@ -114,3 +118,5 @@ car.stop()
 car.right_turn(100)
 time.sleep(1)
 car.stop()
+'''
+car.right_turn()
