@@ -15,8 +15,7 @@ while(cap.isOpened()):
     ret, frame = cap.read()
     if ret==True:
 #        frame = cv2.flip(frame,0)
-#        cv.Flip(fromarray(frame), flipMode=-1)
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+#        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # write the flipped frame
         out.write(frame)
 
