@@ -14,6 +14,8 @@ test_images = test_images.astype('float32')
 train_images /= 255
 test_images /= 255
 
+print(train_images[0])
+
 train_labels = keras.utils.to_categorical(mnist_train_labels, 10)
 test_labels = keras.utils.to_categorical(mnist_test_labels, 10)
 
