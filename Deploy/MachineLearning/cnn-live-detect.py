@@ -18,7 +18,8 @@ def getFlattenArray(img):
     return out_arr
 
 model = keras.models.load_model("model-cnn-v1.h5")
-cap = cv2.VideoCapture(4)
+video_input = input("Enter video input: ")
+cap = cv2.VideoCapture(0)
 
 # grab picture from webcam every second and run through model
 count = 0
