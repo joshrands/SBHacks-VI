@@ -176,7 +176,7 @@ score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
 
-model.save("model-cnn-v1.h5")
+model.save("model-cnn-v2.h5")
 
 #saver = tf.compat.v1.train.Saver()
 #sess = tf.Session()
