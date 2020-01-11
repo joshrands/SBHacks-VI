@@ -1,5 +1,7 @@
 import numpy as np
-import cv, cv2
+#import cv, cv2
+import cv2
+import cv2.cv as cv
 
 #cap = cv2.VideoCapture(0)
 video_input = input("Enter video input: ")

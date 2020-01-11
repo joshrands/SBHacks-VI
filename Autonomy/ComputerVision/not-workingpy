@@ -1,0 +1,23 @@
+# python script for detecting a person
+
+import cv2 
+import time
+
+video_input = input("Enter video input: ")
+cap = cv2.VideoCapture(video_input)
+
+if (cap.isOpened() == False):
+    print("Error opening camera")
+
+count = 0
+while cap.isOpened():
+    ret, frame = cap.read()
+    if ret == True:
+        # Display the resulting frame
+        cv2.imshow('Frame',frame)
+
+    time.sleep(0.5)
+
+
+cap.release()
+cv2.destroyAllWindows()
