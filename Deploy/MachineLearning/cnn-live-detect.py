@@ -17,9 +17,12 @@ def getFlattenArray(img):
 
     return out_arr
 
-model = keras.models.load_model("model-cnn-v1.h5")
-video_input = input("Enter video input: ")
-cap = cv2.VideoCapture(video_input)
+model = keras.models.load_model("model-cnn-v5.h5")
+video_input = int(input("Enter video input: "))
+cap = cv2.VideoCapture(1)
+
+if (cap.isOpened() == False):
+    print("Error opening camera")
 
 # grab picture from webcam every second and run through model
 count = 0
@@ -27,7 +30,7 @@ while cap.isOpened():
     ret, frame = cap.read()
     if ret == True:
         # Display the resulting frame
-        cv2.imshow('Frame',frame)
+#        cv2.imshow('Frame',frame)
 
     #    print(len(frame[0]),len(frame[1]))
 
@@ -39,6 +42,11 @@ while cap.isOpened():
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         resized = cv2.resize(gray, dim, interpolation = cv2.INTER_AREA)
+
+        cv2.imshow("Frame", resized)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
         resized = resized.tolist()
 
         final_in = []
@@ -58,8 +66,10 @@ while cap.isOpened():
         count += 1
         if (predicted == 1):
             print("Heart attack!")
-        elif (count % 20 == 0):
+        else:
             print("You good")
+#        elif (count % 20 == 0):
+#            print("You good")
 
         time.sleep(0.1)
 

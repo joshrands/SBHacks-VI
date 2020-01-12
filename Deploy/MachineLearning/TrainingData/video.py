@@ -3,7 +3,8 @@ import numpy as np
  
 # Create a VideoCapture object and read from input file
 # If the input is the camera, pass 0 instead of the video file name
-video_input = input("Enter video input: ")
+video_input = int(input("Enter video input: "))
+#cap = cv2.VideoCapture(video_input)
 cap = cv2.VideoCapture(video_input)
 
 # Check if camera opened successfully
@@ -12,6 +13,7 @@ if (cap.isOpened()== False):
  
 # Read until video is completed
 while(cap.isOpened()):
+  print("test")
   # Capture frame-by-frame
   ret, frame = cap.read()
   if ret == True:

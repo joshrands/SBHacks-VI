@@ -4,7 +4,7 @@ import numpy as np
 # Create a VideoCapture object and read from input file
 # If the input is the camera, pass 0 instead of the video file name
 video_input = input("Enter video input: ")
-cap = cv2.VideoCapture(video_input)
+cap = cv2.VideoCapture(1)
 
 # Check if camera opened successfully
 if (cap.isOpened()== False): 
