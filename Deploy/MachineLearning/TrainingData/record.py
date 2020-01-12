@@ -1,17 +1,17 @@
 import numpy as np
 #import cv, cv2
 import cv2
-import cv2.cv as cv
 
 #cap = cv2.VideoCapture(0)
-video_input = input("Enter video input: ")
+video_input = int(input("Enter video input: "))
 cap = cv2.VideoCapture(video_input)
 
-file_name = raw_input("Enter output file name: ")
+file_name = input("Enter output file name: ")
 
 # Define the codec and create VideoWriter object
 #fourcc = cv2.VideoWriter_fourcc(*'XVID')
-fourcc = cv2.cv.CV_FOURCC(*'XVID')
+#fourcc = cv2.CV_FOURCC(*'XVID')
+fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
 out = cv2.VideoWriter("./Raw/" + file_name + ".avi",fourcc, 20.0, (640,480))
 
 while(cap.isOpened()):
