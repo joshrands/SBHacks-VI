@@ -5,38 +5,9 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
 
-class ultraSonic(self, trigger, echo)
-
-    def __init__(self, trigger, echo):
-        self.trigPin = trigger
-        self.echoPin = echo
-
-        GPIO.setup(trigPin, GPIO.OUT)
-        GPIO.setup(echoPin, GPIO.IN)
-
-    def distUltra():
-        GPIO.output(self.trigPin, True)
-
-        time.sleep(0.00001)
-        GPIO.output(self.trigPin, False)
-
-        StartTime = time.time()
-        StopTime = time.time()
-
-        while GPIO.input(echoPin) == 0:
-            StartTime = time.time()
-
-        while GPIO.input(echoPin) == 1:
-            StopTime = time.time()
-
-        TimeElapsed = StopTime - StartTime
-        distance = (TimeElapsed * 34300) / 2  # in cm
-
-        return distance
-
 class carClass:
     def __init__(self, flf, flb, frf, frb, blf, blb, brf, brb):
-        # Define motor pins
+        self.turnTime = 1
         self.FLF = flf
         self.FLB = flb
         self.FRF = frf
@@ -61,7 +32,6 @@ class carClass:
         self.trackRgain = 0
         self.cmd = 0
         self.turnTime = .25
-        self.frameError = 0
 
         # Pin out declarations
         GPIO.setup(self.FLF, GPIO.OUT)
@@ -73,7 +43,7 @@ class carClass:
         GPIO.setup(self.BRF, GPIO.OUT)
         GPIO.setup(self.BRB, GPIO.OUT)
 
-        # Encoder pull up set up and ultrasonic set up
+        # Encoder pull up set up
         GPIO.setup(self.LS, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self.RS, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
@@ -212,81 +182,84 @@ class carClass:
         self.trackLgain = pwmBase + (error*errorScale) #Gets bigger if object is on the right of screen
         self.trackRgain = pwmBase - (error*errorScale) #Gets bigger if object is on the left of screen
 
-    def track(self, ultrasonic):
 
-        #while ultrasonic.distUltra() < stopDistance
-            #if person
-                #self.computeTrackCmd(frameError)
-                #self.trackTurn()
-                #time.sleep(.025)
-            #elif no person
-                #scan(self)
+# Start of code to make ultrasonic work
+trigPin = 8
+echoPin = 10
 
-    def getFrameError(self):
-        # FIX ME
-        if frameError == 0:
-            return None
+GPIO.setup(trigPin, GPIO.OUT)
+GPIO.setup(echoPin, GPIO.IN)
 
+def distUltra():
+    GPIO.output(trigPin, True)
 
-    def driveForward(self, goalDistFt, ultrasonic):
-        goalTravelIn = goalDistFt * 12  # Convert feet goal to inches
-        InchPerCt = 4.125  # Inches car moves per encoder count
-        stopDistance = 50  # cm #Limit that will cause car to stop if ultrasonic gets too close to object
+    time.sleep(0.00001)
+    GPIO.output(trigPin, False)
 
-        CountsDes = goalTravelIn / InchPerCt  # Find amount of times the wheels need to turn
-        Lerror = CountsDes - car.leftCount  # left error
-        Rerror = CountsDes - car.rightCount  # right error
-        avgError = (Lerror + Rerror) / 2  # average the errors
+    StartTime = time.time()
+    StopTime = time.time()
 
-        loopCount = 0
-        lastLerr = Lerror
-        lastRerr = Rerror
+    while GPIO.input(echoPin) == 0:
+        StartTime = time.time()
 
-        time.sleep(.5)
+    while GPIO.input(echoPin) == 1:
+        StopTime = time.time()
 
-        while (avgError > 0):
-            car.forward(car.computeCmd(avgError))  # Calculate the forward gain and drive forward at that speed
+    TimeElapsed = StopTime - StartTime
+    distance = (TimeElapsed * 34300) / 2 #in cm
 
-            # If the ultrasonic distance is less than the threshold, the car stops
-            while (ultrasonic.distUltra() < stopDistance):
-                car.stop()
-
-            # Recalculate error
-            Lerror = CountsDes - car.leftCount
-            Rerror = CountsDes - car.rightCount
-
-            # Reset the loop counts if either of the errors are different
-            if Lerror != lastLerr
-                loopCount = 0
-            elif Rerror != lastRerr
-                loopCount = 0
-
-            # Recalc average and iterate loop count
-            avgError = (Lerror + Rerror) / 2
-            loopCount += 1
-            time.sleep(.010)
-
-            # If the loop count is greater than 50 break so seg fault does not happen
-            if loopCount > 50
-                break
-
-        car.stop()  # Stop car at the end
-
-    def scan(self):
-        #while no person
-        #turn 45 degrees
-        #look with camera
-
+    return distance
 
 ######################## Start of Main #########################
 
 #Creating a car object using the following 8 pins
-myCar = carClass(37, 35, 31, 33, 40, 38, 16, 18)
-myUltra = ultraSonic(8, 10)
+car = carClass(37, 35, 31, 33, 40, 38, 16, 18)
 
-#goalTravelFt = 5
-#myCar.driveFwd(goalTravelFt, myUltra)
+goalTravelFt = 5 #Travel goal in feet
+goalTravelIn = goalTravelFt * 12 #Convert to inches
+InchPerCt = 4.125 #Inches car moves per encoder count
+stopDistance = 50 #cm #Limit that will cause car to stop if ultrasonic gets too close to object
 
-myCar.track(myUltra)
+CountsDes = goalTravelIn/InchPerCt # Find amount of times the wheels need to turn
+Lerror = CountsDes - car.leftCount # left error
+Rerror = CountsDes - car.rightCount # right error
+avgError = (Lerror + Rerror)/2 # average the errors
 
-# if no people, do scan function
+loopCount = 0
+lastLerr = Lerror
+lastRerr = Rerror
+
+time.sleep(.5)
+
+while (avgError > 0):
+    car.forward(car.computeCmd(avgError)) # Calculate the forward gain and drive forward at that speed
+
+    # If the ultrasonic distance is less than the threshold, the car stops
+    while (distUltra() < stopDistance):
+        car.stop()
+
+    # Recalculate error
+    Lerror = CountsDes - car.leftCount
+    Rerror = CountsDes - car.rightCount
+
+    # Reset the loop counts if either of the errors are different
+    if Lerror != lastLerr
+        loopCount = 0
+    elif Rerror != lastRerr
+        loopCount = 0
+
+    # Recalc average and iterate loop count
+    avgError = (Lerror + Rerror) / 2
+    loopCount += 1
+    time.sleep(.010)
+
+    # If the loop count is greater than 50 break so seg fault does not happen
+    if loopCount > 50
+        break
+
+car.stop() #Stop car at the end
+
+
+
+
+
