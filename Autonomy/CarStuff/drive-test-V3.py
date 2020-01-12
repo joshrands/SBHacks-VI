@@ -142,7 +142,7 @@ trigPin = 8
 echoPin = 10
 
 GPIO.setup(trigPin, GPIO.OUT)
-GPIO.setup(echoPin, GPIO.OUT)
+GPIO.setup(echoPin, GPIO.IN)
 
 def distUltra():
     GPIO.output(trigPin, True)
@@ -160,9 +160,9 @@ def distUltra():
         StopTime = time.time()
 
     TimeElapsed = StopTime - StartTime
-    distance = (TimeElapsed * 34300) / 2
+    distance = (TimeElapsed * 34300) / 2 #in cm
 
-    return distace
+    return distance
 
 
 car = drive(37, 35, 31, 33, 40, 38, 16, 18)
@@ -186,6 +186,7 @@ car.stop()
 goalTravelFt = 5
 goalTravelIn = goalTravelFt * 12
 InchPerCt = 4.125
+stopDistance = 50 #cm
 
 CountsDes = goalTravelIn/InchPerCt
 Lerror = CountsDes - car.leftCount
@@ -196,6 +197,9 @@ time.sleep(.5)
 
 while (avgError > 0):
     car.forward(car.computeCmd(avgError))
+
+    while (distUltra() < stopDistance):
+        car.stop()
 
     Lerror = CountsDes - car.leftCount
     Rerror = CountsDes - car.rightCount
