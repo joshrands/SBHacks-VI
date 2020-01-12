@@ -12,25 +12,33 @@ import cv2
 import time
 import numpy as np
 import random
+import socket 
+
+# Define the port on which you want to connect 
+# get this before CV and ML
+port = int(input("Enter port: "))
+ip = input("Enter aed ip: ")
 
 # load model from saved location
-model = keras.models.load_model("./Deploy/MachineLearning/model-cnn-v1.h5")
+final_model = "./Deploy/MachineLearning/model-cnn-v6.h5"
+dispatch_threshold = 10
 
-video_input = input("Enter web cam input: ")
+model = keras.models.load_model(final_model)
+
+video_input = int(input("Enter web cam input: "))
 cap = cv2.VideoCapture(video_input)
 
 # grab picture from webcam every 0.1 seconds and run through model
 count = 0
 consecutive_count = 0
-count_threshold = 5
-while cap.isOpened() and consecutive_count < count_threshold:
+while cap.isOpened() and consecutive_count < dispatch_threshold:
     ret, frame = cap.read()
     if ret == True:
         # Display the resulting frame
 #        cv2.imshow('Frame',frame)
 
         # hardcoded dimensions of frame because hackathon
-        dim = (57, 32)
+        dim = (114, 64)
 
         # grayscale the image
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -61,5 +69,17 @@ while cap.isOpened() and consecutive_count < count_threshold:
 print("EMERGENCY HEART ATTACK")
 print("Dispatching autonomous AED...")
 
-# Step 2: Get localization information? Quadrant? 
+# Create a socket object 
+s = socket.socket()          
 
+# connect to the server (change ip address to server ip) 
+s.connect((ip, port)) 
+
+# receive data from the server 
+print(s.recv(1024)) 
+
+# send a thank you message to the client.  
+s.send('GO'.encode())
+
+# close the connection 
+s.close()  

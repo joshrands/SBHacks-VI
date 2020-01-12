@@ -241,7 +241,7 @@ class carClass:
             print("Error reading camera.")
             return None 
         else:
-            frame = cv2.rotate(frame,cv2.ROTATE_180)
+            frame = cv2.rotate(frame,cv2.ROTATE_90_CLOCKWISE)
             image_height, image_width, _ = frame.shape
 
             self.Person_NN.setInput(cv2.dnn.blobFromImage(frame, size=(300, 300), swapRB=True))
@@ -259,10 +259,10 @@ class carClass:
                         box_height = detection[6] * image_height
 
                         # get pixel offset
-                        x_pixel = int(box_x + (box_width - box_x) / 2.0)
+                        y_pixel = int(box_y + (box_height - box_y) / 2.0)
 
                         # get control offset 
-                        feedback = (float(x_pixel) / float(image_width)) * 2 - 1
+                        feedback = (float(y_pixel) / float(image_height)) * 2 - 1
                         print(feedback)
 
         return feedback
@@ -331,14 +331,15 @@ class carClass:
 
 ######################## Start of Main #########################
 
-#Creating a car object using the following 8 pins
-myCar = carClass(37, 35, 31, 33, 40, 38, 16, 18)
-myUltra = ultraSonic(8, 10)
+def deployAEDSystem():
+    #Creating a car object using the following 8 pins
+    myCar = carClass(37, 35, 31, 33, 40, 38, 16, 18)
+    myUltra = ultraSonic(8, 10)
 
-#goalTravelFt = 5
-#myCar.driveFwd(goalTravelFt, myUltra)
+    goalTravelFt = 5
+    myCar.driveFwd(goalTravelFt, myUltra)
 
-time.sleep(0.5)
-myCar.track(myUltra)
+    time.sleep(0.5)
+    myCar.track(myUltra)
 
-# if no people, do scan function
+    # if no people, do scan function

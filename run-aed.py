@@ -5,12 +5,18 @@
 # first of all import the socket library 
 import socket
 import random            
-  
+
+import sys
+# insert at 1, 0 is the script path (or '' in REPL)
+sys.path.insert(1, '/home/pi/SBHacks-VI/Autonomy/CarStuff/')
+
+from drive-test-V3 import *
+
 # next create a socket object 
 s = socket.socket()          
 
-port = int(input("Enter dispatcher port: "))
-ip = input("Enter dispatcher ip: ")
+port = int(input("Enter your port: "))
+ip = input("Enter your ip: ")
   
 # Next bind to the port 
 # we have not typed any ip in the ip field 
@@ -35,7 +41,13 @@ print('Got connection from', addr)
 c.send('Thank you for connecting'.encode()) 
 
 # receive data from system
-print(c.recv(1024)) 
+data = c.recv(1024)
+print(data) 
 
 # Close the connection with the client 
 c.close()
+
+if (data == b'GO'):
+	print("Gametime bitch")
+	# execute drive-test-V3
+    deployAEDSystem()

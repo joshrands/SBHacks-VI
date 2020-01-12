@@ -9,7 +9,7 @@ s = socket.socket()
 # Define the port on which you want to connect 
 # get this before CV and ML
 port = int(input("Enter port: "))
-ip = "127.0.0.1"
+ip = input("Enter aed ip: ")
 
 # connect to the server (change ip address to server ip) 
 s.connect((ip, port)) 
@@ -18,7 +18,7 @@ s.connect((ip, port))
 print(s.recv(1024)) 
 
 # send a thank you message to the client.  
-s.send('Dispatch to Q2 now!'.encode())
+s.send('GO'.encode())
 
 # close the connection 
 s.close()  
