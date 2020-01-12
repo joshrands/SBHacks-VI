@@ -60,7 +60,8 @@ class carClass:
         self.trackLgain = 0
         self.trackRgain = 0
         self.cmd = 0
-        self.turnTime = .25
+        self.turnTime = 0.25
+        self.scanTime = 0.15
         self.frameError = 0
 
         # Pin out declarations
@@ -275,7 +276,19 @@ class carClass:
     def scan(self):
         #while no person
         #turn 45 degrees
+        '''
+        self.FLF_PWM.ChangeDutyCycle(self.turnGain)
+        self.FLB_PWM.ChangeDutyCycle(0)
+        self.FRF_PWM.ChangeDutyCycle(0)
+        self.FRB_PWM.ChangeDutyCycle(self.turnGain)
+        self.BLF_PWM.ChangeDutyCycle(self.turnGain)
+        self.BLB_PWM.ChangeDutyCycle(0)
+        self.BRF_PWM.ChangeDutyCycle(0)
+        self.BRB_PWM.ChangeDutyCycle(self.turnGain)
+        time.sleep(self.scanTime)
+        '''
         #look with camera
+
 
 
 ######################## Start of Main #########################
