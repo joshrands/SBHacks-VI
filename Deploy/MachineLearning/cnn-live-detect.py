@@ -17,9 +17,9 @@ def getFlattenArray(img):
 
     return out_arr
 
-model = keras.models.load_model("model-cnn-v5.h5")
+model = keras.models.load_model("model-cnn-v6.h5")
 video_input = int(input("Enter video input: "))
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(video_input)
 
 if (cap.isOpened() == False):
     print("Error opening camera")
@@ -37,7 +37,7 @@ while cap.isOpened():
 #        scale_percent = 3
 #        width = int(frame.shape[1] * scale_percent / 100)
 #        height = int(frame.shape[0] * scale_percent / 100)
-        dim = (57, 32)
+        dim = (114, 64)
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 

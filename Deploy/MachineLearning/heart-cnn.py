@@ -22,7 +22,7 @@ def display_sample(img, width, height):
     cv2.imshow("Frame", img)
 
     new_img = np.array(img)
-    image = new_img.reshape([57,32])
+    image = new_img.reshape([114,64])
 #    plt.title('Sample: %d  Label: %d' % (num, label))
     plt.imshow(image, cmap=plt.get_cmap('gray_r'))
     plt.show()
@@ -36,7 +36,7 @@ def getFlattenArray(img):
     return out_arr
 
 # scaling images 
-scale_percent = 3
+#scale_percent = 3
 
 def getFramesFromVideo(file_name, attack):
     print("Getting frames from " + file_name)
@@ -50,9 +50,9 @@ def getFramesFromVideo(file_name, attack):
     while success:
 #        cv2.imshow(image)
 #        print(getFlattenArray(image))
-        width = int(image.shape[1] * scale_percent / 100)
-        height = int(image.shape[0] * scale_percent / 100)
-        dim = (width, height)
+        width = 64#int(image.shape[1] * scale_percent / 100)
+        height = 114#int(image.shape[0] * scale_percent / 100)
+        dim = (height, width)
  
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -93,45 +93,45 @@ def getFramesFromVideo(file_name, attack):
 getFramesFromVideo("./attack/parker1.mp4", 1)
 getFramesFromVideo("./attack/parker2.mp4", 1)
 getFramesFromVideo("./attack/parker3.mp4", 1)
-#getFramesFromVideo("./attack/parker4.mp4", 1)
-#getFramesFromVideo("./attack/parker5.mp4", 1)
-#getFramesFromVideo("./attack/josh1.mp4", 1)
-#getFramesFromVideo("./attack/josh2.mp4", 1)
-#getFramesFromVideo("./attack/pete1.mp4", 1)
-#getFramesFromVideo("./attack/pete2.mp4", 1)
-#getFramesFromVideo("./attack/parker21.mp4", 1)
-#getFramesFromVideo("./attack/parker22.mp4", 1)
-#getFramesFromVideo("./attack/parker23.mp4", 1)
-#getFramesFromVideo("./attack/parker31.mp4", 1)
-#getFramesFromVideo("./attack/parker32.mp4", 1)
-#getFramesFromVideo("./attack/parker33.mp4", 1)
-#getFramesFromVideo("./attack/parker34.mp4", 1)
-#getFramesFromVideo("./attack/parker35.mp4", 1)
-#getFramesFromVideo("./attack/parker36.mp4", 1)
+getFramesFromVideo("./attack/parker4.mp4", 1)
+getFramesFromVideo("./attack/parker5.mp4", 1)
+getFramesFromVideo("./attack/josh1.mp4", 1)
+getFramesFromVideo("./attack/josh2.mp4", 1)
+getFramesFromVideo("./attack/pete1.mp4", 1)
+getFramesFromVideo("./attack/pete2.mp4", 1)
+getFramesFromVideo("./attack/parker21.mp4", 1)
+getFramesFromVideo("./attack/parker22.mp4", 1)
+getFramesFromVideo("./attack/parker23.mp4", 1)
+getFramesFromVideo("./attack/parker31.mp4", 1)
+getFramesFromVideo("./attack/parker32.mp4", 1)
+getFramesFromVideo("./attack/parker33.mp4", 1)
+getFramesFromVideo("./attack/parker34.mp4", 1)
+getFramesFromVideo("./attack/parker35.mp4", 1)
+getFramesFromVideo("./attack/parker36.mp4", 1)
 
 getFramesFromVideo("./gooch/parker1.mp4", 0)
 getFramesFromVideo("./gooch/parker2.mp4", 0)
 getFramesFromVideo("./gooch/parker3.mp4", 0)
-#getFramesFromVideo("./gooch/parker4.mp4", 0)
-#getFramesFromVideo("./gooch/parker5.mp4", 0)
-#getFramesFromVideo("./gooch/josh1.mp4", 0)
-#getFramesFromVideo("./gooch/josh2.mp4", 0)
-#getFramesFromVideo("./gooch/pete1.mp4", 0)
-#getFramesFromVideo("./gooch/pete2.mp4", 0)
-#getFramesFromVideo("./gooch/parker21.mp4", 0)
-#getFramesFromVideo("./gooch/parker22.mp4", 0)
-#getFramesFromVideo("./gooch/parker23.mp4", 0)
-#getFramesFromVideo("./gooch/parker31.mp4", 0)
-#getFramesFromVideo("./gooch/parker32.mp4", 0)
-#getFramesFromVideo("./gooch/parker33.mp4", 0)
-#getFramesFromVideo("./gooch/parker34.mp4", 0)
-#getFramesFromVideo("./gooch/parker35.mp4", 0)
-#getFramesFromVideo("./gooch/parker36.mp4", 0)
+getFramesFromVideo("./gooch/parker4.mp4", 0)
+getFramesFromVideo("./gooch/parker5.mp4", 0)
+getFramesFromVideo("./gooch/josh1.mp4", 0)
+getFramesFromVideo("./gooch/josh2.mp4", 0)
+getFramesFromVideo("./gooch/pete1.mp4", 0)
+getFramesFromVideo("./gooch/pete2.mp4", 0)
+getFramesFromVideo("./gooch/parker21.mp4", 0)
+getFramesFromVideo("./gooch/parker22.mp4", 0)
+getFramesFromVideo("./gooch/parker23.mp4", 0)
+getFramesFromVideo("./gooch/parker31.mp4", 0)
+getFramesFromVideo("./gooch/parker32.mp4", 0)
+getFramesFromVideo("./gooch/parker33.mp4", 0)
+getFramesFromVideo("./gooch/parker34.mp4", 0)
+getFramesFromVideo("./gooch/parker35.mp4", 0)
+getFramesFromVideo("./gooch/parker36.mp4", 0)
 
 model = Sequential()
 model.add(Conv2D(32, kernel_size=(3, 3),
                  activation='relu',
-                 input_shape=(32,57,1)))
+                 input_shape=(64,114,1)))
 # 64 3x3 kernels
 model.add(Conv2D(64, (3, 3), activation='relu'))
 # Reduce by taking the max of each 2x2 block
@@ -144,10 +144,6 @@ model.add(Flatten())
 model.add(Dense(128, activation='relu'))
 # Another dropout
 model.add(Dropout(0.5))
-# A hidden layer to learn with
-model.add(Dense(128, activation='relu'))
-# Another dropout
-model.add(Dropout(0.4))
 # A hidden layer to learn with
 model.add(Dense(128, activation='relu'))
 # Another dropout
@@ -196,7 +192,7 @@ for pair in test_data:
 
 history = model.fit(x_train, y_train,
                     batch_size=32,
-                    epochs=3,
+                    epochs=7,
                     verbose=2,
                     validation_data=(x_test, y_test))
 
@@ -215,6 +211,8 @@ print('Test loss:', score[0])
 print('Test accuracy:', score[1])
 
 model.save("model-cnn-" + str(version) + ".h5")
+
+print("Model saved.")
 
 #saver = tf.compat.v1.train.Saver()
 #sess = tf.Session()
