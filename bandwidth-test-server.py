@@ -5,8 +5,7 @@
 # first of all import the socket library 
 import socket
 import random            
-
-from drive-test-V3 import *
+import pickle 
 
 # next create a socket object 
 s = socket.socket()          
@@ -36,9 +35,11 @@ print('Got connection from', addr)
 # send a thank you message to the client.  
 fake_data = []
 for i in range(0,8000):
-	fake_data[i] = 255
+	fake_data.append(255)
 
-c.send(fake_data.encode()) 
+data = pickle.dumps(fake_data)
+c.send(data) 
 
+print(c.recv(1024))
 
 

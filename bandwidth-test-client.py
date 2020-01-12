@@ -2,6 +2,7 @@
 
 # import socket module 
 import socket                
+import pickle
   
 # Create a socket object 
 s = socket.socket()          
@@ -15,7 +16,8 @@ ip = input("Enter aed ip: ")
 s.connect((ip, port)) 
 
 # receive data from the server 
-print(s.recv(8096)) 
+recv_data = s.recv(8096) 
+print(pickle.loads(recv_data))
 
 # send a thank you message to the client.  
 s.send('Thanks'.encode())
