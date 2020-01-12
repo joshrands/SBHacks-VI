@@ -102,6 +102,15 @@ class carClass:
         self.BRF_PWM.start(0)
         self.BRB_PWM.start(0)
 
+        # Person detection setup with NN
+        self.Person_NN = model = cv2.dnn.readNetFromTensorflow('models/frozen_inference_graph.pb',
+                                      'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt')
+
+        self.VidCap = cv2.VideoCapture(0)
+        if (self.VidCap.isOpen() == False):
+            print("Failed to open camera stream")
+
+
     # Stops all PWM permanently
     def end(self):
         self.FLF_PWM.stop()
@@ -223,11 +232,39 @@ class carClass:
             #elif no person
                 #scan(self)
 
+
     def getFrameError(self):
         # FIX ME
-        if frameError == 0:
-            return None
+        ret, frame = self.VidCap.read()
+        if (ret == False):
+            print("Error reading camera.")
+            return None 
+        else:
+            frame = cv2.rotate(frame,cv2.ROTATE_180)
+            image_height, image_width, _ = frame.shape
 
+            self.Person_NN.setInput(cv2.dnn.blobFromImage(frame, size=(300, 300), swapRB=True))
+            output = self.Person_NN.forward()
+
+            feedback = 0
+            for detection in output[0, 0, :, :]:
+                confidence = detection[2]
+                if confidence > .5:
+                    class_id = detection[1]
+                    if class_id == 1: 
+                        box_x = detection[3] * image_width
+                        box_y = detection[4] * image_height
+                        box_width = detection[5] * image_width
+                        box_height = detection[6] * image_height
+
+                        # get pixel offset
+                        x_pixel = int(box_x + (box_width - box_x) / 2.0)
+
+                        # get control offset 
+                        feedback = (float(x_pixel) / float(image_width)) * 2 - 1
+                        print(feedback)
+
+        return feedback
 
     def driveForward(self, goalDistFt, ultrasonic):
         goalTravelIn = goalDistFt * 12  # Convert feet goal to inches
