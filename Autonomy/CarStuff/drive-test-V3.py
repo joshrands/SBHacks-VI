@@ -223,18 +223,19 @@ class carClass:
         self.trackRgain = pwmBase - (error*errorScale) #Gets bigger if object is on the left of screen
 
     def track(self, ultrasonic):
+        person = False
+        frameError = self.getFrameError()
 
-        #while ultrasonic.distUltra() < stopDistance
-            #if person
-                #self.computeTrackCmd(frameError)
-                #self.trackTurn()
-                #time.sleep(.025)
-            #elif no person
-                #scan(self)
+        while ultrasonic.distUltra() < stopDistance:
+            if frameError != 0 and frameError != None:
+                self.computeTrackCmd(frameError)
+                self.trackTurn()
+                time.sleep(.015)
+            elif frameError == None
+                self.scan()
 
 
     def getFrameError(self):
-        # FIX ME
         ret, frame = self.VidCap.read()
         if (ret == False):
             print("Error reading camera.")
@@ -246,7 +247,7 @@ class carClass:
             self.Person_NN.setInput(cv2.dnn.blobFromImage(frame, size=(300, 300), swapRB=True))
             output = self.Person_NN.forward()
 
-            feedback = 0
+            feedback = None
             for detection in output[0, 0, :, :]:
                 confidence = detection[2]
                 if confidence > .5:
@@ -337,6 +338,7 @@ myUltra = ultraSonic(8, 10)
 #goalTravelFt = 5
 #myCar.driveFwd(goalTravelFt, myUltra)
 
+time.sleep(0.5)
 myCar.track(myUltra)
 
 # if no people, do scan function
