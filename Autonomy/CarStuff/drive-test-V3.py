@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+import socket
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -103,13 +104,22 @@ class carClass:
         self.BRB_PWM.start(0)
 
         # Person detection setup with NN
-        self.Person_NN = model = cv2.dnn.readNetFromTensorflow('models/frozen_inference_graph.pb',
-                                      'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt')
+#        self.Person_NN = model = cv2.dnn.readNetFromTensorflow('models/frozen_inference_graph.pb',
+#                                      'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt')
+        # Create a socket object 
+        self.server_socket = socket.socket()          
+            
+        # Define the port on which you want to connect 
+        # get this before CV and ML
+        self.port = int(input("Enter image server port: "))
+        self.ip = input("Enter image server ip: ")
+
+        # connect to the server (change ip address to server ip) 
+        self.server_socket.connect((self.ip, self.port)) 
 
         self.VidCap = cv2.VideoCapture(0)
         if (self.VidCap.isOpen() == False):
             print("Failed to open camera stream")
-
 
     # Stops all PWM permanently
     def end(self):
@@ -243,7 +253,18 @@ class carClass:
         else:
             frame = cv2.rotate(frame,cv2.ROTATE_90_CLOCKWISE)
             image_height, image_width, _ = frame.shape
+            print(image_height, image_width)
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
+            resized = cv2.resize(gray, (300,300), interpolation = cv2.INTER_AREA)
+
+            # send frame to server for feedback classification
+            data = pickle.dumps(resized)
+            print(len(frame))
+            print(len(frame[0]))
+            print(self.server_socket.send(data))
+
+'''
             self.Person_NN.setInput(cv2.dnn.blobFromImage(frame, size=(300, 300), swapRB=True))
             output = self.Person_NN.forward()
 
@@ -264,7 +285,7 @@ class carClass:
                         # get control offset 
                         feedback = (float(y_pixel) / float(image_height)) * 2 - 1
                         print(feedback)
-
+'''
         return feedback
 
     def driveForward(self, goalDistFt, ultrasonic):
