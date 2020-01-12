@@ -138,6 +138,32 @@ class drive:
 
         return self.cmd
 
+trigPin = 8
+echoPin = 10
+
+GPIO.setup(trigPin, GPIO.OUT)
+GPIO.setup(echoPin, GPIO.OUT)
+
+def distUltra():
+    GPIO.output(trigPin, True)
+
+    time.sleep(0.00001)
+    GPIO.output(trigPin, False)
+
+    StartTime = time.time()
+    StopTime = time.time()
+
+    while GPIO.input(echoPin) == 0:
+        StartTime = time.time()
+
+    while GPIO.input(echoPin) == 1:
+        StopTime = time.time()
+
+    TimeElapsed = StopTime - StartTime
+    distance = (TimeElapsed * 34300) / 2
+
+    return distace
+
 
 car = drive(37, 35, 31, 33, 40, 38, 16, 18)
 '''
