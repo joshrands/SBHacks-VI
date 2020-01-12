@@ -1,0 +1,1 @@
+def computeTrackGain(frames)
