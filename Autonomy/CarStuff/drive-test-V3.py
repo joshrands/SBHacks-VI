@@ -16,10 +16,13 @@ class drive:
         self.BLB = blb
         self.BRF = brf
         self.BRB = brb
+
         self.LS = 7
         self.RS = 11
         self.leftCount = 0
         self.rightCount = 0
+        self.gain = 10
+        self.cmd = 0
 
         GPIO.setup(self.FLF, GPIO.OUT)
         GPIO.setup(self.FLB, GPIO.OUT)
@@ -124,13 +127,23 @@ class drive:
         self.rightCount = self.rightCount + 1
         print("Right Count: ", self.rightCount, "\n")
 
+    def computeCmd(self, error):
+        self.cmd = error * self.gain
+
+        if self.cmd > 100:
+            self.cmd = 100
+
+        elif self.cmd < 0:
+            self.cmd = 0
+
+        return self.cmd
+
 
 car = drive(37, 35, 31, 33, 40, 38, 16, 18)
-
+'''
 car.forward(100)
 time.sleep(5)
 car.stop()
-'''
 car.backward(100)
 time.sleep(1)
 car.stop()
@@ -141,3 +154,28 @@ car.right_turn(100)
 time.sleep(1)
 car.stop()
 '''
+
+# in feet
+# gain = 10 this is up in car class
+goalTravelFt = 3
+goalTravelIn = goalTravelFt * 12
+InchPerCt = 4.125
+
+CountsDes = goalTravelIn/InchPerCt
+Lerror = CountsDes - car.leftCount
+Rerror = CountsDes - car.rightCount
+avgError = (Lerror + Rerror)/2
+
+while (avgError > 0):
+    car.forward(car.computeCmd(avgError))
+
+    Lerror = CountsDes - car.leftCount
+    Rerror = CountsDes - car.rightCount
+    avgError = (Lerror + Rerror) / 2
+
+
+
+
+
+
+
