@@ -180,7 +180,6 @@ class carClass:
         self.BRF_PWM.ChangeDutyCycle(self.turnGain)
         self.BRB_PWM.ChangeDutyCycle(0)
         time.sleep(self.turnTime)
-        self.stop()
 
     # Right turn function
     def right_turn(self):
@@ -193,7 +192,6 @@ class carClass:
         self.BRF_PWM.ChangeDutyCycle(0)
         self.BRB_PWM.ChangeDutyCycle(self.turnGain)
         time.sleep(self.turnTime)
-        selft.stop()
 
     # Function for navigating to an object in frame
     def track_turn(self):
@@ -250,7 +248,7 @@ class carClass:
             elif frameError == None:
                 self.scan()
 
-'''
+
     def getFrameError(self):
 #        cap = cv2.VideoCapture(0)
 #        if (cap.isOpened() == False):
@@ -315,7 +313,7 @@ class carClass:
 
             self.server_socket.close()
 
-            return feedback'''
+            return feedback
 
     def driveForward(self, goalDistFt, ultrasonic):
         goalTravelIn = goalDistFt * 12  # Convert feet goal to inches
@@ -364,6 +362,7 @@ class carClass:
     def scan(self):
         #while no person
         #turn 45 degrees
+        '''
         self.FLF_PWM.ChangeDutyCycle(self.turnGain)
         self.FLB_PWM.ChangeDutyCycle(0)
         self.FRF_PWM.ChangeDutyCycle(0)
@@ -373,18 +372,7 @@ class carClass:
         self.BRF_PWM.ChangeDutyCycle(0)
         self.BRB_PWM.ChangeDutyCycle(self.turnGain)
         time.sleep(self.scanTime)
-        self.stop()
-        time.sleep(.1)
-        self.FLF_PWM.ChangeDutyCycle(0)
-        self.FLB_PWM.ChangeDutyCycle(self.turnGain)
-        self.FRF_PWM.ChangeDutyCycle(self.turnGain)
-        self.FRB_PWM.ChangeDutyCycle(0)
-        self.BLF_PWM.ChangeDutyCycle(0)
-        self.BLB_PWM.ChangeDutyCycle(self.turnGain)
-        self.BRF_PWM.ChangeDutyCycle(self.turnGain)
-        self.BRB_PWM.ChangeDutyCycle(0)
-        time.sleep(self.scanTime)
-        self.stop()
+        '''
         #look with camera
 
 
@@ -396,14 +384,11 @@ def deployAEDSystem():
     myCar = carClass(37, 35, 31, 33, 40, 38, 16, 18)
     myUltra = ultraSonic(8, 10)
 
-    goalTravelFt = 8
-    time.sleep(.1)
-    myCar.driveFwd(goalTravelFt, myUltra)
-    time.sleep(.1)
-    myCar.left_turn()
-    time.sleep(.1)
+    goalTravelFt = 5
+#    myCar.driveFwd(goalTravelFt, myUltra)
 
-
+    time.sleep(0.5)
+    myCar.track(myUltra)
 
     # if no people, do scan function
 deployAEDSystem()

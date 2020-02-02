@@ -3,7 +3,7 @@ import time
 import socket
 import cv2
 import pickle
-import os 
+import os
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
@@ -38,6 +38,7 @@ class ultraSonic:
 
         return distance
 
+
 class carClass:
     def __init__(self, flf, flb, frf, frb, blf, blb, brf, brb):
         # Define motor pins
@@ -64,8 +65,9 @@ class carClass:
         self.trackLgain = 0
         self.trackRgain = 0
         self.cmd = 0
-        self.turnTime = 0.25
-        self.scanTime = 0.15
+        self.LturnTime = .75
+        self.RturnTime = .7
+        self.scanTime = 0.35
         self.frameError = 0
 
         # Pin out declarations
@@ -83,9 +85,9 @@ class carClass:
         GPIO.setup(self.RS, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
         # Encoder interrupt set up
-        GPIO.add_event_detect(self.LS, GPIO.FALLING, callback = self.leftIterate, bouncetime = 5)
-        GPIO.add_event_detect(self.RS, GPIO.FALLING, callback = self.rightIterate, bouncetime = 5)
-        
+        GPIO.add_event_detect(self.LS, GPIO.FALLING, callback=self.leftIterate, bouncetime=5)
+        GPIO.add_event_detect(self.RS, GPIO.FALLING, callback=self.rightIterate, bouncetime=5)
+
         # Setting the frequency of the PWM
         self.FLF_PWM = GPIO.PWM(self.FLF, 1000)
         self.FLB_PWM = GPIO.PWM(self.FLB, 1000)
@@ -109,21 +111,21 @@ class carClass:
         self.stopDistance = 50
 
         # Person detection setup with NN
-#        self.Person_NN = model = cv2.dnn.readNetFromTensorflow('models/frozen_inference_graph.pb',
-#                                      'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt')
-        # Create a socket object 
-        self.server_socket = socket.socket()          
-            
-        # Define the port on which you want to connect 
+        #        self.Person_NN = model = cv2.dnn.readNetFromTensorflow('models/frozen_inference_graph.pb',
+        #                                      'models/ssd_mobilenet_v2_coco_2018_03_29.pbtxt')
+        # Create a socket object
+        self.server_socket = socket.socket()
+
+        # Define the port on which you want to connect
         # get this before CV and ML
-        self.port = 7777# int(input("Enter image server port: "))
-        self.ip = "169.231.137.9"#raw_input("Enter image server ip: ")
+        self.port = 7777  # int(input("Enter image server port: "))
+        self.ip = "169.231.137.9"  # raw_input("Enter image server ip: ")
 
-        # connect to the server (change ip address to server ip) 
+        # connect to the server (change ip address to server ip)
 
-#        self.VidCap = cv2.VideoCapture(0)
-#        if (self.VidCap.isOpened() == False):
-#            print("Failed to open camera stream")
+    #        self.VidCap = cv2.VideoCapture(0)
+    #        if (self.VidCap.isOpened() == False):
+    #            print("Failed to open camera stream")
 
     # Stops all PWM permanently
     def end(self):
@@ -179,7 +181,7 @@ class carClass:
         self.BLB_PWM.ChangeDutyCycle(self.turnGain)
         self.BRF_PWM.ChangeDutyCycle(self.turnGain)
         self.BRB_PWM.ChangeDutyCycle(0)
-        time.sleep(self.turnTime)
+        time.sleep(self.LturnTime)
         self.stop()
 
     # Right turn function
@@ -192,8 +194,8 @@ class carClass:
         self.BLB_PWM.ChangeDutyCycle(0)
         self.BRF_PWM.ChangeDutyCycle(0)
         self.BRB_PWM.ChangeDutyCycle(self.turnGain)
-        time.sleep(self.turnTime)
-        selft.stop()
+        time.sleep(self.RturnTime)
+        self.stop()
 
     # Function for navigating to an object in frame
     def track_turn(self):
@@ -233,10 +235,10 @@ class carClass:
         # Positive error mean person is to the right of the center of the screen -> L is greater than R
         # Negative error mean person is to the left of the center of the screen -> R is greater than L
 
-        pwmBase = 75 #Base PWM Value
-        errorScale = 25 #Modifiable based on base PWM
-        self.trackLgain = pwmBase + (error*errorScale) #Gets bigger if object is on the right of screen
-        self.trackRgain = pwmBase - (error*errorScale) #Gets bigger if object is on the left of screen
+        pwmBase = 75  # Base PWM Value
+        errorScale = 25  # Modifiable based on base PWM
+        self.trackLgain = pwmBase + (error * errorScale)  # Gets bigger if object is on the right of screen
+        self.trackRgain = pwmBase - (error * errorScale)  # Gets bigger if object is on the left of screen
 
     def track(self, ultrasonic):
         person = False
@@ -249,73 +251,6 @@ class carClass:
                 time.sleep(.015)
             elif frameError == None:
                 self.scan()
-
-'''
-    def getFrameError(self):
-#        cap = cv2.VideoCapture(0)
-#        if (cap.isOpened() == False):
-#            print("Error opening camera.")
-
-#        ret, frame = cap.read()
-#        if (ret == False):
-#            print("Error reading camera.")
-#            return None 
-#        else:
-       
-        os.system("raspistill -o output.png")
-        frame = cv2.imread('output.png')
-
-        if True:
-#            frame = cv2.rotate(frame,cv2.ROTATE_90_CLOCKWISE)
-            image_height, image_width, _ = frame.shape
-#            print(image_height, image_width)
-            resized = cv2.resize(frame, (300,300), interpolation = cv2.INTER_AREA)
-
-        #    print(frame)
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-           
-        #    print(gray)
-
-            # send frame to server for feedback classification
-            array = []
-            for row in gray:
-                for data in row:
-                    array.append(int(data))
-#                    print(int(data))
-#                array.append(new_row)
-
-#            print(array)
-
-#            data = pickle.dumps(array)
-#            print(data)
-#            print(len(frame))
-#            print(len(frame[0]))
-
-#            new_data = []
-#            for i in range(0,100):
-#                new_data.append(255)
-
-#            pick = pickle.dumps(new_data)
-
-            self.server_socket.connect((self.ip, self.port)) 
-#            print(self.server_socket.send(data))
-            for i in range(0,300*300):
-                point = int(array[i])
-                if (point < 10):
-                    self.server_socket.send("00" + str(point))
-                elif (point < 100):
-                    self.server_socket.send("0" + str(point))
-                else:
-                    self.server_socket.send(str(point))
-
-#                print(self.server_socket.send(array[i].encode()))
-
-            feedback = self.server_socket.recv(30)
-            print(feedback.decode())
-
-            self.server_socket.close()
-
-            return feedback'''
 
     def driveForward(self, goalDistFt, ultrasonic):
         goalTravelIn = goalDistFt * 12  # Convert feet goal to inches
@@ -361,9 +296,10 @@ class carClass:
 
         car.stop()  # Stop car at the end
 
+
     def scan(self):
-        #while no person
-        #turn 45 degrees
+        # while no person
+        # turn 45 degrees
         self.FLF_PWM.ChangeDutyCycle(self.turnGain)
         self.FLB_PWM.ChangeDutyCycle(0)
         self.FRF_PWM.ChangeDutyCycle(0)
@@ -385,26 +321,33 @@ class carClass:
         self.BRB_PWM.ChangeDutyCycle(0)
         time.sleep(self.scanTime)
         self.stop()
-        #look with camera
-
+        # look with camera
 
 
 ######################## Start of Main #########################
 
 def deployAEDSystem():
-    #Creating a car object using the following 8 pins
+    # Creating a car object using the following 8 pins
     myCar = carClass(37, 35, 31, 33, 40, 38, 16, 18)
     myUltra = ultraSonic(8, 10)
 
     goalTravelFt = 8
     time.sleep(.1)
-    myCar.driveFwd(goalTravelFt, myUltra)
+    myCar.driveForward(goalTravelFt, myUltra)
     time.sleep(.1)
     myCar.left_turn()
     time.sleep(.1)
-
+    myCar.scan()
+    time.sleep(.1)
+    goalTravelFt = 10
+    myCar.driveForward(goalTravelFt, myUltra)
 
 
     # if no people, do scan function
+
 deployAEDSystem()
 
+'''
+car = carClass(37, 35, 31, 33, 40, 38, 16, 18)
+car.left_turn()
+'''
