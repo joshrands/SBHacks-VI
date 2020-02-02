@@ -21,7 +21,7 @@ ip = input("Enter aed ip: ")
 
 # load model from saved location
 final_model = "./Deploy/MachineLearning/model-cnn-v6.h5"
-dispatch_threshold = 10
+dispatch_threshold = 3
 
 model = keras.models.load_model(final_model)
 

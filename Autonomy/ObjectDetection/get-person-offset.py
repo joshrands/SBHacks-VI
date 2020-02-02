@@ -67,7 +67,7 @@ while cap.isOpened():
                     feedback = (float(y_pixel) / float(image_height)) * 2 - 1
                     print(feedback)
 
-                    resized = cv2.resize(frame, (114*5,64*5), interpolation = cv2.INTER_AREA)
+                    resized = cv2.resize(frame, (114*15,64*15), interpolation = cv2.INTER_AREA)
 
                     cv2.imshow('image', resized)
                     # cv2.imwrite("image_box_text.jpg",image)

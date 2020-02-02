@@ -13,7 +13,7 @@ import numpy as np
 # next create a socket object 
 s = socket.socket()          
 
-port = 6961#int(input("Enter your port: "))
+port = 7777#int(input("Enter your port: "))
 ip = "169.231.137.9"#input("Enter your ip: ")
   
 # Next bind to the port 
