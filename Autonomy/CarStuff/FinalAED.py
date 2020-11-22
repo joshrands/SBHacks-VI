@@ -65,7 +65,7 @@ class carClass:
         self.trackLgain = 0
         self.trackRgain = 0
         self.cmd = 0
-        self.LturnTime = .75
+        self.LturnTime = .85
         self.RturnTime = .7
         self.scanTime = 0.35
         self.frameError = 0
@@ -253,13 +253,15 @@ class carClass:
                 self.scan()
 
     def driveForward(self, goalDistFt, ultrasonic):
+        self.leftCount = 0
+        self.rightCount = 0
         goalTravelIn = goalDistFt * 12  # Convert feet goal to inches
         InchPerCt = 4.125  # Inches car moves per encoder count
         self.stopDistance = 50  # cm #Limit that will cause car to stop if ultrasonic gets too close to object
 
         CountsDes = goalTravelIn / InchPerCt  # Find amount of times the wheels need to turn
-        Lerror = CountsDes - car.leftCount  # left error
-        Rerror = CountsDes - car.rightCount  # right error
+        Lerror = CountsDes - self.leftCount  # left error
+        Rerror = CountsDes - self.rightCount  # right error
         avgError = (Lerror + Rerror) / 2  # average the errors
 
         loopCount = 0
@@ -269,15 +271,15 @@ class carClass:
         time.sleep(.5)
 
         while (avgError > 0):
-            car.forward(car.computeCmd(avgError))  # Calculate the forward gain and drive forward at that speed
+            self.forward(self.computeCmd(avgError))  # Calculate the forward gain and drive forward at that speed
 
             # If the ultrasonic distance is less than the threshold, the car stops
             while (ultrasonic.distUltra() < self.stopDistance):
-                car.stop()
+                self.stop()
 
             # Recalculate error
-            Lerror = CountsDes - car.leftCount
-            Rerror = CountsDes - car.rightCount
+            Lerror = CountsDes - self.leftCount
+            Rerror = CountsDes - self.rightCount
 
             # Reset the loop counts if either of the errors are different
             if Lerror != lastLerr:
@@ -294,7 +296,7 @@ class carClass:
             if loopCount > 50:
                 break
 
-        car.stop()  # Stop car at the end
+        self.stop()  # Stop car at the end
 
 
     def scan(self):
@@ -332,20 +334,20 @@ def deployAEDSystem():
     myUltra = ultraSonic(8, 10)
 
     goalTravelFt = 8
-    time.sleep(.1)
+    time.sleep(1)
     myCar.driveForward(goalTravelFt, myUltra)
-    time.sleep(.1)
+    time.sleep(1)
     myCar.left_turn()
-    time.sleep(.1)
+    time.sleep(1)
     myCar.scan()
-    time.sleep(.1)
+    time.sleep(1)
     goalTravelFt = 10
     myCar.driveForward(goalTravelFt, myUltra)
 
 
     # if no people, do scan function
 
-deployAEDSystem()
+#deployAEDSystem()
 
 '''
 car = carClass(37, 35, 31, 33, 40, 38, 16, 18)

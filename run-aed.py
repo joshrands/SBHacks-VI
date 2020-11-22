@@ -8,15 +8,15 @@ import random
 
 import sys
 # insert at 1, 0 is the script path (or '' in REPL)
-sys.path.insert(1, '/home/pi/SBHacks-VI/Autonomy/CarStuff/')
+sys.path.append('/home/pi/SBHacks-VI/Autonomy/CarStuff')
 
-from drive-test-V3 import *
+from FinalAED import *
 
 # next create a socket object 
 s = socket.socket()          
 
-port = int(input("Enter your port: "))
-ip = input("Enter your ip: ")
+port = 1234#int(input("Enter your port: "))
+ip = "169.231.174.238"#raw_input("Enter your ip: ")
   
 # Next bind to the port 
 # we have not typed any ip in the ip field 
@@ -48,6 +48,6 @@ print(data)
 c.close()
 
 if (data == b'GO'):
-	print("Gametime bitch")
+    print("Gametime bitch")
 	# execute drive-test-V3
     deployAEDSystem()
